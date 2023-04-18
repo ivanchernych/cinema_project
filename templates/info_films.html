@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ films.name }}</h1>
+    <h4>{{ films.duration }} {{ films.type }}</h4>
+    <iframe width="330" height="200"
+        src="{{ films.trailer }}"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+    <h4>Жанр - {{ films.genre }}</h4>
+    <h4>Режиссер - {{ films.director }}</h4>
+<p><a class="btn btn-primary " href="/">Назад</a></p>
+{% endblock %}

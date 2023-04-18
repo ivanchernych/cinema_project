@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+     {% for item in films %}
+        <div class="col-md6 border rounded">
+            <a href="/cinema/{{ item.name }}"><button><img src="/static/image/{{ item.image }}"  alt="Кнопка «button» " ></button></a>
+            <h2>{{item.name}}</h2>
+            <div>
+                {{item.genre}}
+            </div>
+            <div>
+                {{item.duration}}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -4,6 +4,7 @@ from forms.register_form import RegisterForm
 from db_table.users import Users
 from flask_login import LoginManager, login_user, logout_user, login_required
 from forms.login_form import LoginForm
+from db_table.films import Films
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dgfhfjhekghejgerkglerjglerjgkejglkejghdjgjhjghjdhguukeqrreyhg'
@@ -20,7 +21,9 @@ def load_user(user_id):
 @app.route('/')
 def main():
     db_session.global_init('db/cinema.db')
-    return render_template('base.html')
+    db_sess = db_session.create_session()
+    films = db_sess.query(Films).all()
+    return render_template('movie_list.html', films=films)
 
 
 @app.route('/logout')
@@ -28,6 +31,15 @@ def main():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/cinema/<name_film>', methods=['GET', 'POST'])
+def cinema(name_film):
+    db_session.global_init('db/cinema.db')
+    db_sess = db_session.create_session()
+    films_info = db_sess.query(Films).filter(name_film == Films.name).first()
+    print(films_info.name)
+    return render_template('info_films.html', films=films_info)
 
 
 @app.route('/register', methods=['GET', 'POST'])
