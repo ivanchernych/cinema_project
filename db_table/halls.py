@@ -5,7 +5,8 @@ from data.db_session import SqlAlchemyBase
 class Halls(SqlAlchemyBase):
     __tablename__ = 'halls'
 
-    id_session = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    id_session = sqlalchemy.Column(sqlalchemy.Integer)
     name = sqlalchemy.Column(sqlalchemy.String)
     row = sqlalchemy.Column(sqlalchemy.Integer)
     column1 = sqlalchemy.Column(sqlalchemy.String)

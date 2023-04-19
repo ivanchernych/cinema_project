@@ -10,4 +10,6 @@ class Data_films(SqlAlchemyBase):
     id_film = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('films.id'), autoincrement=True)
     day = sqlalchemy.Column(sqlalchemy.String)
     time = sqlalchemy.Column(sqlalchemy.String)
-    hall_session = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('halls.id_session'), autoincrement=True)
+    hall_session = sqlalchemy.Column(sqlalchemy.Integer)
+    price = sqlalchemy.Column(sqlalchemy.Integer)
+    name_hall = sqlalchemy.Column(sqlalchemy.String)

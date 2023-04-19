@@ -10,3 +10,5 @@ class User_tikets(SqlAlchemyBase):
     id_user = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), autoincrement=True)
     id_data_film = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('data_films.id'), autoincrement=True)
     id_film = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('films.id'), autoincrement=True)
+    row = sqlalchemy.Column(sqlalchemy.Integer)
+    column = sqlalchemy.Column(sqlalchemy.Integer)

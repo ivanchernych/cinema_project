@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <title>{{ films.name }}</title>
     <h1>{{ films.name }}</h1>
     <h4>{{ films.duration }} {{ films.type }}</h4>
     <iframe width="330" height="200"
@@ -11,5 +12,13 @@
     </iframe>
     <h4>Жанр - {{ films.genre }}</h4>
     <h4>Режиссер - {{ films.director }}</h4>
-<p><a class="btn btn-primary " href="/">Назад</a></p>
+    <h1>Расписание</h1>
+    {% for item in halls %}
+        <div class="col-md6 border rounded">
+            <h4>{{item.day}}</h4>
+            <a class="btn btn-secondary" href="/cinema/{{open_information_cinema}}/{{item.hall_session}}">{{item.time}}</a>
+            <h4>цена - {{item.price}}</h4>
+        </div>
+    {% endfor %}
+     <p><a class="btn btn-primary " href="/">Назад</a></p>
 {% endblock %}
