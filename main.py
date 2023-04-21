@@ -312,6 +312,20 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
+@app.route(f'/profile', methods=['GET', 'POST'])
+def profile():
+    user = current_user
+    db_session.global_init("db/cinema.db")
+    db_sess = db_session.create_session()
+    tikets = []
+    tiket_user = db_sess.query(User_tikets).filter(User_tikets.id_user == user.id).all()
+    for item in tiket_user:
+        film = db_sess.query(Films).filter(Films.id == item.id_film).first()
+        data = db_sess.query(Data_films).filter(Data_films.id == item.id_data_film).first()
+        tikets.append(f'фильм: {film.name}, {data.name_hall}, дата: {data.day} {data.time}, ряд {item.row} место {item.column}')
+    return render_template('profile.html', user=user, tikets=tikets)
+
+
 @app.route(f'/cinema/cancellation/<name_film>/<id_session>', methods=['GET', 'POST'])
 def cancellation(name_film, id_session):
     db_session.global_init('db/cinema.db')

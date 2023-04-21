@@ -10,7 +10,7 @@
         <h1>кинотеатр</h1>
         <nav>
             {% if current_user.is_authenticated %}
-                <a class="navbar-brand" href="/logout">{{ current_user.login }}</a>
+                <a class="btn btn-info" href="/profile">{{ current_user.login }}</a>
             {% else %}
                 <p>
                     <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
