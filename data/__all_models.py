@@ -3,4 +3,4 @@ import db_table.films
 import db_table.halls
 import db_table.data_films
 import db_table.users_tikets
-import db_table.select_user_tikets
+import db_table.pick_user_tikets

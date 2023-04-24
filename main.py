@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, Blueprint
 from data import db_session
 from forms.register_form import RegisterForm
 from db_table.users import Users
@@ -8,7 +8,9 @@ from db_table.films import Films
 from db_table.data_films import Data_films
 from db_table.halls import Halls
 from db_table.users_tikets import User_tikets
-from db_table.select_user_tikets import Select_user_tikets
+from db_table.pick_user_tikets import Pick_user_tikets
+
+ROWS = 7
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dgfhfjhekghejgerkglerjglerjgkejglkejghdjgjhjghjdhguukeqrreyhg'
@@ -19,7 +21,7 @@ login_manager.init_app(app)
 def create_hall(id_session, name_hall):
     db_session.global_init('db/cinema.db')
     db_sess = db_session.create_session()
-    for i in range(7):
+    for i in range(ROWS):
         hall = Halls()
         hall.id_session = id_session
         hall.row = i + 1
@@ -68,8 +70,8 @@ def halls(name_film, id_session):
         db_session.global_init('db/cinema.db')
         db_sess = db_session.create_session()
 
-        info_tikets = db_sess.query(Select_user_tikets).filter(Select_user_tikets.id_user == current_user.id,
-                                                               Select_user_tikets.id_data_film == id_session).all()
+        info_tikets = db_sess.query(Pick_user_tikets).filter(Pick_user_tikets.id_user == current_user.id,
+                                                             Pick_user_tikets.id_data_film == id_session).all()
 
         if info_tikets:
             info_tikets_table = {
@@ -81,16 +83,15 @@ def halls(name_film, id_session):
                 price = db_sess.query(Data_films).filter(Data_films.id == item.id_data_film).first()
                 info_tikets_table['цена'] += int(price.price)
                 info_tikets_table['места'] += [f'ряд {item.row}, место {item.column}']
-            print(info_tikets_table)
         halls_info = db_sess.query(Halls).filter(Halls.id_session == id_session).all()
         data_name_hall = db_sess.query(Data_films).filter(Data_films.id == id_session).first()
         if not halls_info:
             create_hall(id_session, data_name_hall.name_hall)
         table_hall = []
-        for i in range(7):
+        for i in range(ROWS):
             hall_view = db_sess.query(Halls).filter(Halls.id_session == id_session, Halls.row == i + 1).first()
             table_hall.append([i + 1, [[hall_view.column1, 1], [hall_view.column2, 2], [hall_view.column3, 3],
-                                       [hall_view.column4, 4],[hall_view.column5, 5], [hall_view.column6, 6],
+                                       [hall_view.column4, 4], [hall_view.column5, 5], [hall_view.column6, 6],
                                        [hall_view.column7, 7], [hall_view.column8, 8], [hall_view.column9, 9]]])
         return render_template('hall_view.html', hall=table_hall, name_film=name_film, id_session=id_session,
                                info_tikets_table=info_tikets_table)
@@ -104,168 +105,103 @@ def buy_tikets(name_film, id_session, row, column):
     db_sess = db_session.create_session()
 
     tikets = db_sess.query(Halls).filter(Halls.id_session == id_session, Halls.row == row).first()
-
     if column == 1:
         tikets.column1 = 'x'
-
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 2:
         tikets.column2 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 3:
         tikets.column3 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 4:
         tikets.column4 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 5:
         tikets.column5 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 6:
         tikets.column6 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 7:
         tikets.column7 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 8:
         tikets.column8 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
     elif column == 9:
         tikets.column9 = 'x'
-        user_tiket = Select_user_tikets()
-
+        user_tiket = Pick_user_tikets()
         user_tiket.id_user = current_user.id
-
         id_film = db_sess.query(Films).filter(Films.name == name_film).first()
-
         user_tiket.id_film = id_film.id
-
         user_tiket.id_data_film = id_session
-
         user_tiket.column = column
-
         user_tiket.row = row
-
         db_sess.add(user_tiket)
         db_sess.commit()
 
@@ -322,7 +258,8 @@ def profile():
     for item in tiket_user:
         film = db_sess.query(Films).filter(Films.id == item.id_film).first()
         data = db_sess.query(Data_films).filter(Data_films.id == item.id_data_film).first()
-        tikets.append(f'фильм: {film.name}, {data.name_hall}, дата: {data.day} {data.time}, ряд {item.row} место {item.column}')
+        tikets.append(
+            f'фильм: {film.name}, {data.name_hall}, дата: {data.day} {data.time}, ряд {item.row} место {item.column}')
     return render_template('profile.html', user=user, tikets=tikets)
 
 
@@ -330,11 +267,10 @@ def profile():
 def cancellation(name_film, id_session):
     db_session.global_init('db/cinema.db')
     db_sess = db_session.create_session()
-    row = db_sess.query(Select_user_tikets).filter(Select_user_tikets.id_user == current_user.id,
-                                                      Select_user_tikets.id_data_film == id_session).all()
+    row = db_sess.query(Pick_user_tikets).filter(Pick_user_tikets.id_user == current_user.id,
+                                                 Pick_user_tikets.id_data_film == id_session).all()
 
     for el in row:
-        print(el.row, el.column)
         if el.column == 1:
             tikets = db_sess.query(Halls).filter(Halls.id_session == id_session, Halls.row == el.row).first()
             tikets.column1 = None
@@ -372,8 +308,8 @@ def cancellation(name_film, id_session):
             tikets.column9 = None
             db_sess.commit()
 
-    db_sess.query(Select_user_tikets).filter(Select_user_tikets.id_user == current_user.id,
-                                                      Select_user_tikets.id_data_film == id_session).delete()
+    db_sess.query(Pick_user_tikets).filter(Pick_user_tikets.id_user == current_user.id,
+                                           Pick_user_tikets.id_data_film == id_session).delete()
     db_sess.commit()
     return redirect(f'/cinema/{name_film}/{id_session}')
 
@@ -382,10 +318,9 @@ def cancellation(name_film, id_session):
 def buy(name_film, id_session):
     db_session.global_init('db/cinema.db')
     db_sess = db_session.create_session()
-    row = db_sess.query(Select_user_tikets).filter(Select_user_tikets.id_user == current_user.id,
-                                                   Select_user_tikets.id_data_film == id_session).all()
+    row = db_sess.query(Pick_user_tikets).filter(Pick_user_tikets.id_user == current_user.id,
+                                                 Pick_user_tikets.id_data_film == id_session).all()
     for el in row:
-        print(el.row, el.column)
         if el.column == 1:
             tikets = db_sess.query(Halls).filter(Halls.id_session == id_session, Halls.row == el.row).first()
             tikets.column1 = 'buy'
@@ -423,8 +358,8 @@ def buy(name_film, id_session):
             tikets.column9 = 'buy'
             db_sess.commit()
 
-    tiket = db_sess.query(Select_user_tikets).filter(Select_user_tikets.id_user == current_user.id,
-                                                      Select_user_tikets.id_data_film == id_session).all()
+    tiket = db_sess.query(Pick_user_tikets).filter(Pick_user_tikets.id_user == current_user.id,
+                                                   Pick_user_tikets.id_data_film == id_session).all()
     for item in tiket:
         user_tiket = User_tikets()
         user_tiket.id_user = item.id_user
@@ -435,12 +370,12 @@ def buy(name_film, id_session):
         db_sess.add(user_tiket)
         db_sess.commit()
 
-    db_sess.query(Select_user_tikets).filter(Select_user_tikets.id_user == current_user.id,
-                                             Select_user_tikets.id_data_film == id_session).delete()
+    db_sess.query(Pick_user_tikets).filter(Pick_user_tikets.id_user == current_user.id,
+                                           Pick_user_tikets.id_data_film == id_session).delete()
     db_sess.commit()
 
     return redirect(f'/cinema/{name_film}/{id_session}')
 
 
 if __name__ == '__main__':
-    app.run(port=8080,  host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')
