@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, request
 from data import db_session
 from forms.register_form import RegisterForm
 from db_table.users import Users
@@ -12,7 +12,7 @@ from db_table.pick_user_tikets import Pick_user_tikets
 import os
 from werkzeug.utils import secure_filename
 
-ROWS = 7
+ROWS_HALL = 7
 UPLOAD_FOLDER = 'static/image'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
@@ -26,7 +26,7 @@ login_manager.init_app(app)
 def create_hall(id_session, name_hall):
     db_session.global_init('db/cinema.db')
     db_sess = db_session.create_session()
-    for i in range(ROWS):
+    for i in range(ROWS_HALL):
         hall = Halls()
         hall.id_session = id_session
         hall.row = i + 1
@@ -98,7 +98,7 @@ def halls(name_film, id_session):
         if not halls_info:
             create_hall(id_session, data_name_hall.name_hall)
         table_hall = []
-        for i in range(ROWS):
+        for i in range(ROWS_HALL):
             hall_view = db_sess.query(Halls).filter(Halls.id_session == id_session, Halls.row == i + 1).first()
             table_hall.append([i + 1, [[hall_view.column1, 1], [hall_view.column2, 2], [hall_view.column3, 3],
                                        [hall_view.column4, 4], [hall_view.column5, 5], [hall_view.column6, 6],
