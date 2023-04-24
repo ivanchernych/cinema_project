@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, Blueprint
+from flask import Flask, render_template, redirect, url_for, request
 from data import db_session
 from forms.register_form import RegisterForm
 from db_table.users import Users
@@ -9,11 +9,16 @@ from db_table.data_films import Data_films
 from db_table.halls import Halls
 from db_table.users_tikets import User_tikets
 from db_table.pick_user_tikets import Pick_user_tikets
+import os
+from werkzeug.utils import secure_filename
 
 ROWS = 7
+UPLOAD_FOLDER = 'static/image'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dgfhfjhekghejgerkglerjglerjgkejglkejghdjgjhjghjdhguukeqrreyhg'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -28,6 +33,11 @@ def create_hall(id_session, name_hall):
         hall.name = name_hall
         db_sess.add(hall)
         db_sess.commit()
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @login_manager.user_loader
@@ -253,6 +263,19 @@ def profile():
     user = current_user
     db_session.global_init("db/cinema.db")
     db_sess = db_session.create_session()
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            user = db_sess.query(Users).filter(Users.id == user.id).first()
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            user.avatar = filename
+            db_sess.commit()
+
     tikets = []
     tiket_user = db_sess.query(User_tikets).filter(User_tikets.id_user == user.id).all()
     for item in tiket_user:
@@ -260,7 +283,8 @@ def profile():
         data = db_sess.query(Data_films).filter(Data_films.id == item.id_data_film).first()
         tikets.append(
             f'фильм: {film.name}, {data.name_hall}, дата: {data.day} {data.time}, ряд {item.row} место {item.column}')
-    return render_template('profile.html', user=user, tikets=tikets)
+    user_avatar = db_sess.query(Users).filter(Users.id == user.id).first().avatar
+    return render_template('profile.html', user=user, tikets=tikets, avatar=user_avatar)
 
 
 @app.route(f'/cinema/cancellation/<name_film>/<id_session>', methods=['GET', 'POST'])

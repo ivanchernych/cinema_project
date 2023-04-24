@@ -7,6 +7,11 @@
         <title>Профиль</title>
     </head>
     <body>
+        <img src="/static/image/{{avatar}}" alt="Аватарка не найдена!" width="400" height="400">
+        <form method=post enctype=multipart/form-data>
+          <input type=file name=file>
+          <input type=submit value=сохранить>
+        </form>
         <h1>{{user.login}}</h1>
         <h4>купленные билеты:</h4>
          {% for item in tikets %}
